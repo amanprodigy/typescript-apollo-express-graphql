@@ -23,6 +23,7 @@ httpServer.listen(
 
 
 /* Uncomment this for express-graphql way
+ * @see https://medium.com/codingthesmartway-com-blog/creating-a-graphql-server-with-node-js-and-express-f6dddc5320e1
 const root = { message: () => 'Hello world' };
 import { graphqlHTTP } from 'express-graphql';
 app.use('/graphql', graphqlHTTP({
