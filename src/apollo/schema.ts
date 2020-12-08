@@ -44,10 +44,17 @@ const typeDefs = gql`
     login(email: String): User
   }
 
-  type Query {
+  type LaunchConnection {
+    cursor: String!
+    hasMore: String!
     launches: [Launch]!
+  }
+
+  type Query {
+    launches(pageSize: Int, after: String): LaunchConnection!
     launch(id: ID!): Launch
     me: User
   }
+
 `;
 export default typeDefs;
