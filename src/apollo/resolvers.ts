@@ -1,6 +1,7 @@
 import { paginateResults } from './utils';
 
 export default {
+
   Query: {
     launches: async (_, { pageSize = 20, after }, { dataSources }) => {
       const allLaunches = await dataSources.launchAPI.getAllLaunches();
@@ -25,6 +26,51 @@ export default {
       dataSources.launchAPI.getLaunchById({ launchId: id }),
     me: (_, __, { dataSources }) => dataSources.userAPI.findOrCreateUser()
   },
+
+  Mutation: {
+    login: async ( _, { email }, { dataSources } ) => {
+      const user = await dataSources.userAPI.findOrCreateUser({ email });
+      if ( user ) {
+        user.token = Buffer.from(email).toString('base64');
+        return user;
+      }
+    },
+
+    bookTrips: async (_, { launchIds }, { dataSources }) => {
+      const results = await dataSources.userAPI.bookTrips( { launchIds } );
+      const launches = await dataSources.launchAPI.getLaunchesByIds( { launchIds } );
+
+      return {
+        success: results && results.length === launchIds.length,
+        message:
+          results.length === launchIds.length
+          ? 'trips booked successfully'
+          : `the following launches could not be booked: ${launchIds.filter(
+            launchId => !results.include(launchId),
+          )}`,
+        launches,
+      }
+    },
+
+    cancelTrip: async (_, { launchId }, { dataSources }) => {
+      const result = await dataSources.userAPI.cancelTrip({ launchId });
+
+      if(!result) {
+        return {
+          success: false,
+          message: 'failed to cancel trip',
+        }
+      }
+
+      const launch = await dataSources.launchAPI.getLaunchById({ launchId });
+      return {
+        success: true,
+        message: 'trip cancelled',
+        launches: [launch],
+      }
+    }
+  },
+
   Mission: {
     missionPatch: ( mission, { size } = { size: 'LARGE' }) => {
       return size === 'SMALL'
@@ -32,10 +78,12 @@ export default {
       : mission.missionPatchLarge
     }
   },
+
   Launch: {
     isBooked: async (launch, _, { dataSources }) => 
       dataSources.userAPI.isBookedOnLaunch({ launchId: launch.id })
   },
+
   User: {
     trips: async (_, __, { dataSources }) => {
       // get ids of launches by user

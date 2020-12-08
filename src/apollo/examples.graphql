@@ -1,0 +1,52 @@
+# Get one launch by id
+query GetLaunch($id: ID!) {
+  launch(id: $id) {
+    id
+    mission {
+      name
+    }
+  }
+}
+
+# Get Launches
+query GetLaunches {
+  launches {
+    launches {
+      id
+      mission {
+        name
+        missionPatch
+      }
+    }
+  }
+}
+
+# Get three launches
+query GetLaunches {
+  launches(pageSize: 3) {
+    launches {
+      id
+      mission {
+        name
+      }
+    }
+  }
+}
+
+# LoginUser
+mutation LoginUser {
+  login(email: "daisy@apollographql.com") {
+    token
+  }
+}
+
+# BookTrips
+mutation BookTrips {
+  bookTrips(launchIds: [67, 68, 69]) {
+    success
+    message
+    launches {
+      id
+    }
+  }
+}

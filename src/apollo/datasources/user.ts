@@ -28,8 +28,8 @@ export class UserAPI extends DataSource {
       this.context && this.context.user ? this.context.user.email : emailArg;
     if (!email || !isEmail.validate(email)) return null;
 
-    const users = await this.store.users.findOrCreate({ where: { email } });
-    return users && users[0] ? users[0] : null;
+    const [ user, created ] = await this.store.users.findOrCreate({ where: { email } });
+    return user ? user : null;
   }
 
   async bookTrips({ launchIds }) {
@@ -50,10 +50,11 @@ export class UserAPI extends DataSource {
 
   async bookTrip({ launchId }) {
     const userId = this.context.user.id;
-    const res = await this.store.trips.findOrCreate({
+
+    const trip = await this.store.trips.findOrCreate({
       where: { userId, launchId },
     });
-    return res && res.length ? res[0].get() : false;
+    return trip !== null ? trip : false;
   }
 
   async cancelTrip({ launchId }) {
