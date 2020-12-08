@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node 'dist/normal/server.js'",
-    "build": "tsc -p . && ncp src/normal/schema dist/normal/schema",
+    "start": "node 'dist/apollo/server.js'",
+    "build": "tsc -p . && ncp src/apollo/schema dist/apollo/schema",
     "start:dev": "npm run build:dev",
-    "build:dev": "nodemon 'src/normal/server.ts' --exec 'ts-node' src/normal/server.ts -e ts,graphql",
+    "build:dev": "nodemon 'src/apollo/server.ts' --exec 'ts-node' src/apollo/server.ts -e ts,graphql",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
